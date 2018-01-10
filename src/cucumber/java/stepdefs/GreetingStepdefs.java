@@ -1,7 +1,9 @@
 package stepdefs;
 
 import cucumber.api.java.en.Given;
+import cucumber.api.java.en.Then;
 import example.Greeting;
+import lombok.extern.slf4j.Slf4j;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -12,12 +14,18 @@ import static org.junit.Assert.assertThat;
  *
  * @author Di
  */
+@Slf4j
 public class GreetingStepdefs {
 
     @Given("^Say Hi$")
-    public void sayHi() throws Throwable {
+    public void sayHi() {
         Greeting greeting = new Greeting();
         greeting.sayHi();
         assertThat(greeting.hiOrNot(), is(true));
+    }
+
+    @Then("^Hi$")
+    public void hi() {
+        log.info("Hi Hi Hi");
     }
 }
