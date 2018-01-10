@@ -1,0 +1,81 @@
+plugins {
+    id 'idea'
+    id 'java'
+}
+
+repositories {
+    jcenter()
+}
+
+ext {
+    guavaVersion = '22.0'
+    lombokVersion = '1.16.18'
+    cucumberVersion = '2.3.1'
+    cucumberPrettyReportVersion = '3.12.0'
+    junitVersion = '4.12'
+    slf4jVersion = '1.7.25'
+}
+
+dependencies {
+    // guava
+    compile "com.google.guava:guava:$guavaVersion"
+
+    // lombok
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+
+    // cucumber
+    compile "io.cucumber:cucumber-java:$cucumberVersion"
+    testCompile "io.cucumber:cucumber-junit:$cucumberVersion"
+    compile "net.masterthought:cucumber-reporting:$cucumberPrettyReportVersion"
+
+    // junit
+    testCompile "junit:junit:$junitVersion"
+
+    // slf4j
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+    testCompile "org.slf4j:slf4j-simple:$slf4jVersion"
+}
+
+sourceSets {
+    cucumber {
+        java {
+            srcDirs = ['src/cucumber/java']
+        }
+        resources {
+            srcDirs = ['src/cucumber/resources']
+        }
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+configurations {
+    cucumberCompile.extendsFrom testCompile
+    cucumberRunTime.extendsFrom testRunTime
+}
+
+task cucumber(type: Test, dependsOn: 'cleanTest') {
+    description 'Runs all cucumber tests through Cucumber JUnit'
+
+    group 'verification'
+
+    setTestClassesDirs sourceSets.cucumber.output.classesDirs
+    classpath = sourceSets.cucumber.runtimeClasspath
+
+    outputs.upToDateWhen { false }
+
+    testLogging.showStandardStreams = true
+
+    systemProperty 'cucumber.options', System.properties.getProperty('cucumber.options')
+    systemProperty 'org.slf4j.simpleLogger.showDateTime', 'true'
+    systemProperty 'org.slf4j.simpleLogger.dateTimeFormat', 'yyyy-MM-dd\'T\'HH:mm:ss'
+
+    finalizedBy 'cucumberReport'
+}
+
+task cucumberReport(type: JavaExec) {
+    description 'Executes Java class to create customized cucumber reports'
+
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'utility.ReportGeneration'
+}
