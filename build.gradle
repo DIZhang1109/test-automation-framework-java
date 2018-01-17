@@ -25,6 +25,7 @@ dependencies {
 
     // cucumber
     compile "io.cucumber:cucumber-java:$cucumberVersion"
+    compile "io.cucumber:cucumber-picocontainer:$cucumberVersion"
     testCompile "io.cucumber:cucumber-junit:$cucumberVersion"
     compile "net.masterthought:cucumber-reporting:$cucumberPrettyReportVersion"
 
